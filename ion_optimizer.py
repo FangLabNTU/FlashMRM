@@ -273,13 +273,13 @@ class IonPairOptimizerNIST:
         max_intensity_sum = candidate_df['intensity_sum'].max()
         max_hit_num = candidate_df['hit_num'].max()
         
-        # Sensitivity Score = 当前intensity_sum / 所有组合中最大的intensity_sum
+        # Sensitivity Score = current intensity_sum / maximum intensity_sum among all combinations
         if max_intensity_sum > 0:
             candidate_df['sensitivity_score'] = candidate_df['intensity_sum'] / max_intensity_sum
         else:
             candidate_df['sensitivity_score'] = 0
         
-        # Specificity Score = 1 - hit_num / 所有组合中最大的hit_num, 如果最大的hit_num为0，结果为1
+        # Specificity Score = 1 - hit_num / maximum hit_num among all combinations, if max hit_num is 0, result is 1
         if max_hit_num > 0:
             candidate_df['specificity_score'] = 1 - candidate_df['hit_num'] / max_hit_num
         else:

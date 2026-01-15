@@ -1,96 +1,96 @@
 # MRM Transition Optimization Tool
 
-MRM (Multiple Reaction Monitoring) 转换优化工具，用于质谱分析中的离子对优化。
+A tool for optimizing MRM (Multiple Reaction Monitoring) transitions for mass spectrometry analysis.
 
-## 项目结构
+## Project Structure
 
 ```
 .
-├── config.py                  # 配置类，包含所有参数设置
-├── data_loader.py             # 数据加载模块
-│   ├── DataLoader            # 基础数据加载器
-│   └── LazyFileLoader        # 延迟文件加载器（内存优化）
-├── interference_calculator.py # 干扰计算模块
-│   ├── InterferenceCalculatorQE   # QE方法干扰计算器
-│   └── InterferenceCalculatorNIST # NIST方法干扰计算器
-├── ion_optimizer.py          # 离子对优化模块
-│   ├── IonPairOptimizerQE    # QE方法离子对优化器
-│   └── IonPairOptimizerNIST  # NIST方法离子对优化器
-├── memory_monitor.py          # 内存监控模块
-│   └── MemoryMonitor         # 内存使用监控器
-├── mrm_optimizer.py          # 主优化器模块
-│   └── MRMOptimizer          # 主优化器类
-├── validator.py              # 验证模块
-│   └── InterferenceDBValidator # 干扰库格式验证器
-├── main.py                   # 主入口文件
-└── __init__.py               # 包初始化文件
+├── config.py                  # Configuration class with all parameter settings
+├── data_loader.py             # Data loading module
+│   ├── DataLoader            # Basic data loader
+│   └── LazyFileLoader        # Lazy file loader (memory optimized)
+├── interference_calculator.py # Interference calculation module
+│   ├── InterferenceCalculatorQE   # QE method interference calculator
+│   └── InterferenceCalculatorNIST # NIST method interference calculator
+├── ion_optimizer.py          # Ion pair optimization module
+│   ├── IonPairOptimizerQE    # QE method ion pair optimizer
+│   └── IonPairOptimizerNIST  # NIST method ion pair optimizer
+├── memory_monitor.py          # Memory monitoring module
+│   └── MemoryMonitor         # Memory usage monitor
+├── mrm_optimizer.py          # Main optimizer module
+│   └── MRMOptimizer          # Main optimizer class
+├── validator.py              # Validation module
+│   └── InterferenceDBValidator # Interference database format validator
+├── main.py                   # Main entry point
+└── __init__.py               # Package initialization file
 ```
 
-## 模块说明
+## Module Description
 
 ### config.py
-包含所有配置参数，使用 dataclass 定义，便于管理和修改。
+Contains all configuration parameters, defined using dataclass for easy management and modification.
 
 ### data_loader.py
-- **DataLoader**: 基础数据加载器，用于加载CSV文件
-- **LazyFileLoader**: 延迟加载器，按需查询数据，减少内存占用
+- **DataLoader**: Basic data loader for loading CSV files
+- **LazyFileLoader**: Lazy loader that queries data on-demand to reduce memory usage
 
 ### interference_calculator.py
-- **InterferenceCalculatorQE**: QE方法的干扰计算
-- **InterferenceCalculatorNIST**: NIST方法的干扰计算
+- **InterferenceCalculatorQE**: Interference calculation for QE method
+- **InterferenceCalculatorNIST**: Interference calculation for NIST method
 
 ### ion_optimizer.py
-- **IonPairOptimizerQE**: QE方法的离子对优化
-- **IonPairOptimizerNIST**: NIST方法的离子对优化
+- **IonPairOptimizerQE**: Ion pair optimization for QE method
+- **IonPairOptimizerNIST**: Ion pair optimization for NIST method
 
 ### memory_monitor.py
-内存使用监控，跟踪程序运行过程中的内存占用情况。
-
-### mrm_optimizer.py
-主优化器类，协调各个模块完成MRM转换优化任务。
+Memory usage monitoring that tracks memory consumption during program execution.
 
 ### validator.py
-干扰库格式验证器，用于验证用户上传的自定义干扰库格式是否正确。
+Interference database format validator for validating user-uploaded custom interference databases.
+
+### mrm_optimizer.py
+Main optimizer class that coordinates all modules to complete MRM transition optimization tasks.
 
 ### main.py
-命令行入口，解析参数并启动优化流程。
+Command-line entry point that parses arguments and starts the optimization process.
 
-## 使用方法
+## Usage
 
-### 基本使用
+### Basic Usage
 
 ```bash
-# 使用NIST方法处理375个化合物
+# Process 375 compounds using NIST method
 python main.py --intf-db nist --max-compounds 375
 
-# 使用QE方法处理单个化合物
+# Process a single compound using QE method
 python main.py --intf-db qe --single-compound --inchikey "YOUR_INCHIKEY"
 
-# 指定输出文件
+# Specify output file
 python main.py --output my_results.csv
 ```
 
-### 使用自定义干扰库
+### Using Custom Interference Database
 
-用户可以上传自己的干扰库文件或文件夹供计算使用：
+Users can upload their own interference database files or folders for calculation:
 
 ```bash
-# 使用自定义干扰库（NIST格式）
+# Use custom interference database (NIST format)
 python main.py --intf-db nist --custom-intf-db /path/to/your/interference_db.csv
 
-# 使用自定义干扰库文件夹（包含多个CSV文件）
+# Use custom interference database folder (contains multiple CSV files)
 python main.py --intf-db nist --custom-intf-db /path/to/your/interference_db_folder
 
-# 使用自定义干扰库（QE格式）
+# Use custom interference database (QE format)
 python main.py --intf-db qe --custom-intf-db /path/to/your/qe_interference_db.csv
 
-# 跳过验证（不推荐，仅在确认格式正确时使用）
+# Skip validation (not recommended, use only when format is confirmed correct)
 python main.py --intf-db nist --custom-intf-db /path/to/db --skip-validation
 ```
 
-#### 干扰库格式要求
+#### Interference Database Format Requirements
 
-**NIST方法干扰库必需列：**
+**Required columns for NIST method interference database:**
 - `InChIKey`
 - `PrecursorMZ`
 - `RT`
@@ -100,21 +100,21 @@ python main.py --intf-db nist --custom-intf-db /path/to/db --skip-validation
 - `Ion_mode`
 - `Precursor_type`
 
-**QE方法干扰库必需列：**
+**Required columns for QE method interference database:**
 - `Alignment ID`
 - `Average Mz`
 - `Average Rt(min)`
 - `CE`
 - `MS/MS spectrum`
 
-程序会自动验证用户上传的干扰库格式，确保包含所有必需的列。
+The program will automatically validate the format of user-uploaded interference databases to ensure all required columns are present.
 
-## 依赖项
+## Dependencies
 
 - pandas
 - numpy
 - tqdm
 
-## 许可证
+## License
 
-[添加许可证信息]
+[Add license information]

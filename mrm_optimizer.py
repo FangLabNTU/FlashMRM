@@ -32,7 +32,7 @@ class MRMOptimizer:
         
         # Initialize memory monitor
         self.memory_monitor = MemoryMonitor()
-        self.memory_monitor.log_snapshot("初始化完成")
+        self.memory_monitor.log_snapshot("Initialization complete")
         
         # Initialize different components based on method selection
         if self.config.USE_NIST_METHOD:
@@ -51,14 +51,14 @@ class MRMOptimizer:
     
     def load_all_data(self):
         """Load all data - using lazy loading to reduce memory"""
-        logger.info("使用内存优化模式：按需加载数据，不一次性加载所有文件")
+        logger.info("Using memory-optimized mode: loading data on-demand, not loading all files at once")
         
         # In single compound mode, we don't need demo_data
         if not self.config.SINGLE_COMPOUND_MODE:
             self.demo_df = self.data_loader.load_demo_data()
             self.unique_inchikeys = self.demo_df['InChIKey'].unique().tolist()
-            self.memory_monitor.log_snapshot("加载 demo_data 完成")
-            logger.info(f"找到 {len(self.unique_inchikeys)} 个唯一的 InChIKey")
+            self.memory_monitor.log_snapshot("Demo data loaded")
+            logger.info(f"Found {len(self.unique_inchikeys)} unique InChIKeys")
         else:
             # Still load demo_data but we won't use it for matching
             self.demo_df = None
@@ -69,8 +69,8 @@ class MRMOptimizer:
         self.intf_df = None
         self.matched_df = None
         
-        logger.info("大文件将按需查询，内存占用将保持在较低水平")
-        self.memory_monitor.log_snapshot("数据加载准备完成")
+        logger.info("Large files will be queried on-demand, memory usage will remain low")
+        self.memory_monitor.log_snapshot("Data loading preparation complete")
     
     def check_inchikey_exists(self, target_inchikey: str) -> bool:
         """Check if a specific InChIKey exists"""
@@ -459,7 +459,7 @@ class MRMOptimizer:
                 
                 # Monitor memory after each compound
                 if (i + 1) % 5 == 0:  # Check memory every 5 compounds
-                    self.memory_monitor.log_snapshot(f"处理 {i + 1} 个化合物后")
+                    self.memory_monitor.log_snapshot(f"After processing {i + 1} compounds")
                 
                 # Periodic saving of intermediate results and progress display
                 if (i + 1) % self.config.SAVE_INTERVAL == 0:
@@ -476,12 +476,12 @@ class MRMOptimizer:
                     logger.info(f"  Estimated remaining time: {estimated_remaining_time/3600:.2f} hours")
                     logger.info(f"Saving intermediate results...")
                     self._save_intermediate_results(results, i + 1)
-                    self.memory_monitor.log_snapshot("保存中间结果后")
+                    self.memory_monitor.log_snapshot("After saving intermediate results")
                 
                 # Periodic memory cleanup
                 if (i + 1) % self.config.BATCH_SIZE == 0:
                     gc.collect()
-                    self.memory_monitor.log_snapshot("内存清理后")
+                    self.memory_monitor.log_snapshot("After memory cleanup")
                     
             except Exception as e:
                 logger.error(f"Error processing compound {inchikey}: {e}")
@@ -498,14 +498,14 @@ class MRMOptimizer:
         logger.info(f"Success rate: {processed_count/len(compounds_to_process)*100:.1f}%")
         
         # Final memory snapshot
-        self.memory_monitor.log_snapshot("处理完成")
+        self.memory_monitor.log_snapshot("Processing complete")
         
         # Save results
         if results:
             result_df = pd.DataFrame(results)
             result_df.to_csv(self.config.OUTPUT_PATH, index=False, encoding='utf-8')
             logger.info(f"Final results saved to {self.config.OUTPUT_PATH}")
-            self.memory_monitor.log_snapshot("保存最终结果后")
+            self.memory_monitor.log_snapshot("After saving final results")
             
             # Display results summary
             logger.info("\nResults summary:")
@@ -518,11 +518,11 @@ class MRMOptimizer:
         # Display memory usage summary
         summary = self.memory_monitor.get_summary()
         logger.info("\n" + "="*60)
-        logger.info("内存使用情况总结:")
+        logger.info("Memory Usage Summary:")
         logger.info("="*60)
-        logger.info(f"最大内存占用: {summary['max_memory_mb']:.2f} MB ({summary['max_memory_gb']:.3f} GB)")
-        logger.info(f"是否超过2GB限制: {'是' if summary['max_memory_gb'] > 2.0 else '否'}")
-        logger.info("\n关键节点内存使用:")
+        logger.info(f"Maximum memory usage: {summary['max_memory_mb']:.2f} MB ({summary['max_memory_gb']:.3f} GB)")
+        logger.info(f"Exceeds 2GB limit: {'Yes' if summary['max_memory_gb'] > 2.0 else 'No'}")
+        logger.info("\nMemory usage at key points:")
         for snapshot in summary['snapshots']:
-            logger.info(f"  {snapshot['label']}: 峰值={snapshot['peak_mb']:.2f} MB")
+            logger.info(f"  {snapshot['label']}: Peak={snapshot['peak_mb']:.2f} MB")
         logger.info("="*60)

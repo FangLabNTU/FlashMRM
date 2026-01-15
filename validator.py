@@ -36,14 +36,14 @@ class InterferenceDBValidator:
             (is_valid, error_message)
         """
         if not os.path.exists(db_path):
-            return False, f"干扰库路径不存在: {db_path}"
+            return False, f"Interference database path does not exist: {db_path}"
         
         try:
             # Check if it's a file or folder
             if os.path.isfile(db_path):
                 # Single file
                 if not db_path.endswith('.csv'):
-                    return False, f"干扰库文件必须是CSV格式: {db_path}"
+                    return False, f"Interference database file must be in CSV format: {db_path}"
                 
                 # Read first chunk to check columns
                 chunk = pd.read_csv(db_path, nrows=100, encoding='utf-8', low_memory=False)
@@ -51,16 +51,16 @@ class InterferenceDBValidator:
                 
                 missing_columns = [col for col in required_columns if col not in chunk.columns]
                 if missing_columns:
-                    return False, f"干扰库缺少必需的列: {missing_columns}"
+                    return False, f"Interference database missing required columns: {missing_columns}"
                 
-                logger.info(f"干扰库文件验证通过: {db_path}")
-                return True, "验证通过"
+                logger.info(f"Interference database file validated successfully: {db_path}")
+                return True, "Validation passed"
                 
             elif os.path.isdir(db_path):
                 # Folder with multiple CSV files
                 csv_files = [f for f in os.listdir(db_path) if f.endswith('.csv')]
                 if not csv_files:
-                    return False, f"干扰库文件夹中没有CSV文件: {db_path}"
+                    return False, f"No CSV files found in interference database folder: {db_path}"
                 
                 # Check first file as sample
                 sample_file = os.path.join(db_path, csv_files[0])
@@ -69,15 +69,15 @@ class InterferenceDBValidator:
                 
                 missing_columns = [col for col in required_columns if col not in chunk.columns]
                 if missing_columns:
-                    return False, f"干扰库文件缺少必需的列: {missing_columns} (检查文件: {csv_files[0]})"
+                    return False, f"Interference database file missing required columns: {missing_columns} (checking file: {csv_files[0]})"
                 
-                logger.info(f"干扰库文件夹验证通过: {db_path} (包含 {len(csv_files)} 个CSV文件)")
-                return True, f"验证通过 (包含 {len(csv_files)} 个CSV文件)"
+                logger.info(f"Interference database folder validated successfully: {db_path} (contains {len(csv_files)} CSV files)")
+                return True, f"Validation passed (contains {len(csv_files)} CSV files)"
             else:
-                return False, f"无效的路径类型: {db_path}"
+                return False, f"Invalid path type: {db_path}"
                 
         except Exception as e:
-            return False, f"验证干扰库时出错: {str(e)}"
+            return False, f"Error validating interference database: {str(e)}"
     
     @staticmethod
     def get_db_info(db_path: str) -> dict:
@@ -119,6 +119,6 @@ class InterferenceDBValidator:
                     for chunk in pd.read_csv(file_path, chunksize=10000, encoding='utf-8', low_memory=False):
                         info['total_rows'] += len(chunk)
         except Exception as e:
-            logger.warning(f"获取干扰库信息时出错: {e}")
+            logger.warning(f"Error getting interference database information: {e}")
         
         return info

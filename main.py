@@ -50,36 +50,36 @@ def main():
         # Handle custom interference database
         if args.custom_intf_db:
             custom_db_path = os.path.abspath(args.custom_intf_db)
-            logger.info(f"检测到自定义干扰库: {custom_db_path}")
+            logger.info(f"Custom interference database detected: {custom_db_path}")
             
             # Validate custom database
             if not args.skip_validation:
-                logger.info("正在验证自定义干扰库格式...")
+                logger.info("Validating custom interference database format...")
                 is_valid, error_msg = InterferenceDBValidator.validate_interference_db(
                     custom_db_path, method=args.intf_db
                 )
                 if not is_valid:
-                    logger.error(f"自定义干扰库验证失败: {error_msg}")
-                    logger.error("请检查干扰库格式是否正确，或使用 --skip-validation 跳过验证（不推荐）")
+                    logger.error(f"Custom interference database validation failed: {error_msg}")
+                    logger.error("Please check the database format, or use --skip-validation to skip validation (not recommended)")
                     return
                 
                 # Get database info
                 db_info = InterferenceDBValidator.get_db_info(custom_db_path)
-                logger.info(f"自定义干扰库信息:")
-                logger.info(f"  类型: {db_info['type']}")
-                logger.info(f"  文件数: {db_info['file_count']}")
-                logger.info(f"  总行数（采样）: {db_info['total_rows']}")
+                logger.info(f"Custom interference database information:")
+                logger.info(f"  Type: {db_info['type']}")
+                logger.info(f"  File count: {db_info['file_count']}")
+                logger.info(f"  Total rows (sampled): {db_info['total_rows']}")
             
             config.CUSTOM_INTF_DB_PATH = custom_db_path
             config.INTF_TQDB_PATH = custom_db_path
-            logger.info(f"使用自定义干扰库: {custom_db_path}")
+            logger.info(f"Using custom interference database: {custom_db_path}")
         else:
             # Set INTF_TQDB_PATH based on selection
             if args.intf_db == 'nist':
                 config.INTF_TQDB_PATH = 'INTF_TQDB_NIST'
             else:
                 config.INTF_TQDB_PATH = 'INTF_TQDB_QE'
-            logger.info(f"使用默认干扰库: {config.INTF_TQDB_PATH}")
+            logger.info(f"Using default interference database: {config.INTF_TQDB_PATH}")
         
         logger.info(f"Using interference database: {config.INTF_TQDB_PATH}")
         logger.info(f"Using method: {'NIST' if config.USE_NIST_METHOD else 'QE'}")

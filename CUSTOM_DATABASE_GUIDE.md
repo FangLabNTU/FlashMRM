@@ -1,94 +1,94 @@
-# 自定义干扰库使用指南
+# Custom Interference Database Usage Guide
 
-本指南说明如何准备和使用自定义干扰库。
+This guide explains how to prepare and use custom interference databases.
 
-## 功能说明
+## Feature Description
 
-程序支持用户上传自己的干扰库文件或文件夹，用于MRM转换优化计算。上传的干扰库会自动进行格式验证，确保包含所有必需的列。
+The program supports users uploading their own interference database files or folders for MRM transition optimization calculations. Uploaded interference databases are automatically validated to ensure all required columns are present.
 
-## 干扰库格式要求
+## Interference Database Format Requirements
 
-### NIST方法干扰库
+### NIST Method Interference Database
 
-**必需列：**
-- `InChIKey`: 化合物的InChIKey标识符
-- `PrecursorMZ`: 母离子m/z值
-- `RT`: 保留时间（分钟）
-- `MSMS`: 碎片离子m/z值
-- `NCE`: 归一化碰撞能
-- `CE`: 碰撞能
-- `Ion_mode`: 离子模式（如 'P' 表示正离子模式）
-- `Precursor_type`: 母离子类型（如 '[M+H]+'）
+**Required columns:**
+- `InChIKey`: Compound InChIKey identifier
+- `PrecursorMZ`: Precursor ion m/z value
+- `RT`: Retention time (minutes)
+- `MSMS`: Fragment ion m/z value
+- `NCE`: Normalized collision energy
+- `CE`: Collision energy
+- `Ion_mode`: Ion mode (e.g., 'P' for positive ion mode)
+- `Precursor_type`: Precursor type (e.g., '[M+H]+')
 
-**示例CSV格式：**
+**Example CSV format:**
 ```csv
 InChIKey,PrecursorMZ,RT,MSMS,NCE,CE,Ion_mode,Precursor_type
 YASYVMFAVPKPKE-UHFFFAOYSA-N,202.0433,10.5,175.0320,30.0,30.0,P,[M+H]+
 ```
 
-### QE方法干扰库
+### QE Method Interference Database
 
-**必需列：**
-- `Alignment ID`: 对齐ID
-- `Average Mz`: 平均m/z值
-- `Average Rt(min)`: 平均保留时间（分钟）
-- `CE`: 碰撞能
-- `MS/MS spectrum`: MS/MS谱图字符串（格式：mz1:intensity1 mz2:intensity2 ...）
+**Required columns:**
+- `Alignment ID`: Alignment ID
+- `Average Mz`: Average m/z value
+- `Average Rt(min)`: Average retention time (minutes)
+- `CE`: Collision energy
+- `MS/MS spectrum`: MS/MS spectrum string (format: mz1:intensity1 mz2:intensity2 ...)
 
-**示例CSV格式：**
+**Example CSV format:**
 ```csv
 Alignment ID,Average Mz,Average Rt(min),CE,MS/MS spectrum
 ID001,202.0433,10.5,30.0,175.0320:1000 131.0600:500
 ```
 
-## 使用方法
+## Usage
 
-### 1. 准备干扰库文件
+### 1. Prepare Interference Database File
 
-确保您的干扰库文件或文件夹包含所有必需的列，并保存为CSV格式。
+Ensure your interference database file or folder contains all required columns and is saved in CSV format.
 
-### 2. 使用命令行参数
+### 2. Use Command-Line Arguments
 
 ```bash
-# 使用单个CSV文件作为干扰库
+# Use a single CSV file as interference database
 python main.py --intf-db nist --custom-intf-db /path/to/your/interference_db.csv
 
-# 使用包含多个CSV文件的文件夹作为干扰库
+# Use a folder containing multiple CSV files as interference database
 python main.py --intf-db nist --custom-intf-db /path/to/your/interference_db_folder
 
-# 使用相对路径
+# Use relative path
 python main.py --intf-db nist --custom-intf-db ./my_interference_db.csv
 ```
 
-### 3. 验证过程
+### 3. Validation Process
 
-程序会自动验证干扰库格式：
-- 检查路径是否存在
-- 检查文件格式（必须是CSV）
-- 检查是否包含所有必需的列
-- 显示干扰库基本信息（文件数、行数等）
+The program automatically validates the interference database format:
+- Checks if path exists
+- Checks file format (must be CSV)
+- Checks if all required columns are present
+- Displays basic information about the interference database (file count, row count, etc.)
 
-如果验证失败，程序会显示详细的错误信息，帮助您修正格式。
+If validation fails, the program will display detailed error messages to help you correct the format.
 
-### 4. 跳过验证（不推荐）
+### 4. Skip Validation (Not Recommended)
 
-仅在确认干扰库格式完全正确时，可以使用 `--skip-validation` 跳过验证：
+Only use `--skip-validation` when you are certain the interference database format is completely correct:
 
 ```bash
 python main.py --intf-db nist --custom-intf-db /path/to/db --skip-validation
 ```
 
-## 注意事项
+## Notes
 
-1. **文件编码**：确保CSV文件使用UTF-8编码
-2. **列名大小写**：列名必须与要求完全匹配（包括大小写）
-3. **数据类型**：数值列（如PrecursorMZ、RT等）应为数字类型
-4. **文件大小**：大文件会被分块读取，不会一次性加载到内存
-5. **文件夹结构**：如果使用文件夹，所有CSV文件应具有相同的列结构
+1. **File Encoding**: Ensure CSV files use UTF-8 encoding
+2. **Column Name Case**: Column names must exactly match requirements (including case)
+3. **Data Types**: Numeric columns (such as PrecursorMZ, RT, etc.) should be numeric type
+4. **File Size**: Large files will be read in chunks and not loaded into memory all at once
+5. **Folder Structure**: If using a folder, all CSV files should have the same column structure
 
-## 示例
+## Examples
 
-### 示例1：使用单个文件
+### Example 1: Using a Single File
 
 ```bash
 python main.py \
@@ -98,7 +98,7 @@ python main.py \
     --output results_with_custom_db.csv
 ```
 
-### 示例2：使用文件夹
+### Example 2: Using a Folder
 
 ```bash
 python main.py \
@@ -107,7 +107,7 @@ python main.py \
     --max-compounds 50
 ```
 
-### 示例3：QE方法自定义干扰库
+### Example 3: QE Method Custom Interference Database
 
 ```bash
 python main.py \
@@ -117,28 +117,28 @@ python main.py \
     --inchikey "YOUR_INCHIKEY"
 ```
 
-## 故障排除
+## Troubleshooting
 
-### 错误：干扰库路径不存在
-- 检查路径是否正确
-- 使用绝对路径或确保相对路径正确
+### Error: Interference database path does not exist
+- Check if the path is correct
+- Use absolute path or ensure relative path is correct
 
-### 错误：缺少必需的列
-- 检查CSV文件是否包含所有必需的列
-- 确保列名拼写正确（包括大小写）
+### Error: Missing required columns
+- Check if CSV file contains all required columns
+- Ensure column names are spelled correctly (including case)
 
-### 错误：文件格式不正确
-- 确保文件是CSV格式
-- 检查文件编码是否为UTF-8
+### Error: Incorrect file format
+- Ensure file is in CSV format
+- Check if file encoding is UTF-8
 
-### 性能问题
-- 大文件会被自动分块处理
-- 如果文件夹包含大量文件，首次运行可能需要较长时间建立索引
+### Performance Issues
+- Large files will be automatically processed in chunks
+- If folder contains many files, first run may take longer to build index
 
-## 技术支持
+## Technical Support
 
-如有问题，请检查：
-1. 干扰库格式是否符合要求
-2. 文件路径是否正确
-3. 文件编码是否为UTF-8
-4. 查看日志输出的详细错误信息
+If you encounter problems, please check:
+1. Whether interference database format meets requirements
+2. Whether file path is correct
+3. Whether file encoding is UTF-8
+4. Check detailed error messages in log output

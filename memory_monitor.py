@@ -45,7 +45,7 @@ class MemoryMonitor:
     def log_snapshot(self, label: str = ""):
         """Take snapshot and log it"""
         current_mb, peak_mb = self.snapshot(label)
-        logger.info(f"[内存监控] {label}: 当前={current_mb:.2f} MB, 峰值={peak_mb:.2f} MB")
+        logger.info(f"[Memory Monitor] {label}: Current={current_mb:.2f} MB, Peak={peak_mb:.2f} MB")
         return current_mb, peak_mb
     
     def get_summary(self) -> Dict:
